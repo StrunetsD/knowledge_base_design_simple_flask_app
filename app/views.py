@@ -60,7 +60,7 @@ def create_organization():
         'data': {'id': org.id}
     }), 201
 
-# Курсы
+
 @api.route('/courses', methods=['GET'])
 @handle_errors
 def get_courses():

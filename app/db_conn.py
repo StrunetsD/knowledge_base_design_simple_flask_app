@@ -5,8 +5,8 @@ from sqlalchemy.orm import sessionmaker
 from config import *
 
 connection_string = f'postgresql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}'
-
-Session = sessionmaker(bind=connection_string)
+engine = create_engine(connection_string)
+Session = sessionmaker(bind=engine)
 
 @contextmanager
 def get_session():
@@ -19,3 +19,5 @@ def get_session():
         raise
     finally:
         session.close()
+
+        
