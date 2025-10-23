@@ -1,0 +1,63 @@
+<!-- templates/group_filling_form.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-users"></i> Наполнение групп</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="course_id" class="form-label">Курс *</label>
+                        <select class="form-select" id="course_id" name="course_id" required>
+                            <option value="">Выберите курс</option>
+                            {% for course in courses %}
+                            <option value="{{ course[0] }}">{{ course[2] }} ({{ course[1] }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="start_date" class="form-label">Дата начала *</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="end_date" class="form-label">Дата окончания *</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-chart-bar"></i> Сформировать отчет
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Установка дат по умолчанию (последний месяц)
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const lastMonth = new Date(today);
+        lastMonth.setMonth(today.getMonth() - 1);
+        
+        document.getElementById('start_date').value = lastMonth.toISOString().split('T')[0];
+        document.getElementById('end_date').value = today.toISOString().split('T')[0];
+    });
+</script>
+{% endblock %}

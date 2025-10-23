@@ -1,0 +1,42 @@
+<!-- templates/price_list_form.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-file-invoice-dollar"></i> Прайс-лист организации</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="organization_id" class="form-label">Организация *</label>
+                        <select class="form-select" id="organization_id" name="organization_id" required>
+                            <option value="">Выберите организацию</option>
+                            {% for org in organizations %}
+                            <option value="{{ org[0] }}">{{ org[2] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="target_date" class="form-label">Дата актуальности *</label>
+                        <input type="date" class="form-control" id="target_date" name="target_date" 
+                               value="{{ today }}" required>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-chart-bar"></i> Сформировать отчет
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

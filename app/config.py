@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv()
+
 class Config:
     DEBUG = bool(os.environ.get('DEBUG'))
     SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -14,6 +15,5 @@ class Config:
     DB_URL=os.environ.get('DB_URL')
 
 
-settings = Config()
 
-print(settings.DB_URL)
+settings = Config()

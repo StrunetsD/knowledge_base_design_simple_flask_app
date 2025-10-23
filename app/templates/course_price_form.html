@@ -1,0 +1,84 @@
+<!-- templates/course_price_form.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-money-bill-wave"></i>
+                    Добавление цены для курса: {{ course[2] }}
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if current_price %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Текущая цена: {{ "%.2f"|format(current_price[0]) }} ₽ 
+                    (документ №{{ current_price[1] }} от {{ current_price[2].strftime('%d.%m.%Y') if current_price[2] else 'не указана' }})
+                </div>
+                {% endif %}
+                
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="document_number" class="form-label">Номер документа *</label>
+                                <input type="text" class="form-control" id="document_number" name="document_number" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="document_date" class="form-label">Дата документа *</label>
+                                <input type="date" class="form-control" id="document_date" name="document_date" 
+                                       value="{{ today }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Цена (без НДС) *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="price" name="price" 
+                                           min="0" step="0.01" required>
+                                    <span class="input-group-text">₽</span>
+                                </div>
+                                <small class="form-text text-muted">
+                                    Цена с НДС (20%): <span id="vat_price">0.00</span> ₽
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Сохранить цену
+                        </button>
+                        <a href="{{ url_for('courses') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const priceInput = document.getElementById('price');
+    const vatSpan = document.getElementById('vat_price');
+    
+    function updateVatPrice() {
+        const price = parseFloat(priceInput.value) || 0;
+        const vatPrice = price * 1.2;
+        vatSpan.textContent = vatPrice.toFixed(2);
+    }
+    
+    priceInput.addEventListener('input', updateVatPrice);
+    updateVatPrice(); // Initial calculation
+});
+</script>
+{% endblock %}

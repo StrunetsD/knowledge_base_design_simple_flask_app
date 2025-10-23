@@ -1,0 +1,112 @@
+<!-- templates/group_filling_report.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-users"></i> Наполнение групп</h2>
+    <button onclick="window.print()" class="btn btn-secondary">
+        <i class="fas fa-print"></i> Печать
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Курс: {{ course[2] }} ({{ course[1] }})</h5>
+        <p class="mb-0">Период: с {{ start_date }} по {{ end_date }}</p>
+    </div>
+    <div class="card-body">
+        <!-- Статистика -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body text-center">
+                        <h4>{{ filling_data.total_groups }}</h4>
+                        <p>Всего групп</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body text-center">
+                        <h4>{{ filling_data.total_students }}</h4>
+                        <p>Всего студентов</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body text-center">
+                        <h4>{{ filling_data.full_groups }}</h4>
+                        <p>Полных групп</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body text-center">
+                        <h4>{{ filling_data.not_full_groups }}</h4>
+                        <p>Неполных групп</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Детали по группам -->
+        {% if filling_data.group_details %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>№ заявки</th>
+                        <th>Дата заявки</th>
+                        <th>Кол-во студентов</th>
+                        <th>Статус</th>
+                        <th>Статус наполнения</th>
+                        <th>% наполнения</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in filling_data.group_details %}
+                    <tr>
+                        <td><strong>{{ group[0] }}</strong></td>
+                        <td>{{ group[1].strftime('%d.%m.%Y') if group[1] else '-' }}</td>
+                        <td>{{ group[2] }}</td>
+                        <td>
+                            {% if group[3] == 'новая' %}
+                                <span class="badge bg-primary">Новая</span>
+                            {% elif group[3] == 'подтверждена' %}
+                                <span class="badge bg-success">Подтверждена</span>
+                            {% elif group[3] == 'завершена' %}
+                                <span class="badge bg-secondary">Завершена</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ group[3] }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if group[4] == 'Полностью набрана' %}
+                                <span class="badge bg-success">{{ group[4] }}</span>
+                            {% else %}
+                                <span class="badge bg-warning">{{ group[4] }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar {% if group[5] >= 100 %}bg-success{% else %}bg-warning{% endif %}" 
+                                     role="progressbar" style="width: {{ group[5] }}%">
+                                    {{ group[5] }}%
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> Нет данных о группах за выбранный период.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

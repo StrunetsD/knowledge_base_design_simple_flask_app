@@ -1,0 +1,131 @@
+<!-- templates/training_request_form.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-{{ 'edit' if request else 'plus' }}"></i>
+                    {% if request %}Редактирование заявки{% else %}Добавление заявки{% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="request_number" class="form-label">Номер заявки *</label>
+                                <input type="text" class="form-control" id="request_number" name="request_number" 
+                                       value="{{ request[1] if request }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="client_organization_id" class="form-label">Клиентская организация *</label>
+                                <select class="form-select" id="client_organization_id" name="client_organization_id" required>
+                                    <option value="">Выберите организацию</option>
+                                    {% for org in client_organizations %}
+                                    <option value="{{ org[0] }}" 
+                                            {% if request and request[3] == org[0] %}selected{% endif %}>
+                                        {{ org[1] }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="course_id" class="form-label">Курс *</label>
+                                <select class="form-select" id="course_id" name="course_id" required>
+                                    <option value="">Выберите курс</option>
+                                    {% for course in courses %}
+                                    <option value="{{ course[0] }}" 
+                                            {% if request and request[4] == course[0] %}selected{% endif %}>
+                                        {{ course[2] }} ({{ course[1] }})
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Новые поля для дат курса -->
+                            <div class="mb-3">
+                                <label for="start_date" class="form-label">Дата начала курса *</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date" 
+                                       value="{{ request[10] if request else '' }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="required_deadline" class="form-label">Требуемый срок *</label>
+                                <input type="date" class="form-control" id="required_deadline" name="required_deadline" 
+                                       value="{{ request[5] if request }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="total_students" class="form-label">Количество студентов *</label>
+                                <input type="number" class="form-control" id="total_students" name="total_students" 
+                                       value="{{ request[6] if request }}" min="1" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Статус *</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="новая" {% if request and request[7] == 'новая' %}selected{% endif %}>Новая</option>
+                                    <option value="подтверждена" {% if request and request[7] == 'подтверждена' %}selected{% endif %}>Подтверждена</option>
+                                    <option value="отклонена" {% if request and request[7] == 'отклонена' %}selected{% endif %}>Отклонена</option>
+                                    <option value="завершена" {% if request and request[7] == 'завершена' %}selected{% endif %}>Завершена</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="end_date" class="form-label">Дата окончания курса *</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date" 
+                                       value="{{ request[11] if request else '' }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const startDate = document.getElementById('start_date');
+                            const endDate = document.getElementById('end_date');
+                            const requiredDeadline = document.getElementById('required_deadline');
+
+                            function validateDates() {
+                                if (startDate.value && endDate.value) {
+                                    if (startDate.value > endDate.value) {
+                                        endDate.setCustomValidity('Дата окончания не может быть раньше даты начала');
+                                    } else {
+                                        endDate.setCustomValidity('');
+                                    }
+                                }
+
+                                if (requiredDeadline.value && startDate.value) {
+                                    if (requiredDeadline.value > startDate.value) {
+                                        startDate.setCustomValidity('Дата начала курса не может быть раньше требуемого срока');
+                                    } else {
+                                        startDate.setCustomValidity('');
+                                    }
+                                }
+                            }
+
+                            startDate.addEventListener('change', validateDates);
+                            endDate.addEventListener('change', validateDates);
+                            requiredDeadline.addEventListener('change', validateDates);
+                        });
+                    </script>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            {% if request %}Сохранить изменения{% else %}Добавить заявку{% endif %}
+                        </button>
+                        <a href="{{ url_for('training_requests') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

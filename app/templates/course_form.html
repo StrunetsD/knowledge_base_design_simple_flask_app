@@ -1,0 +1,101 @@
+<!-- templates/course_form.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-{{ 'edit' if course else 'plus' }}"></i>
+                    {% if course %}Редактирование курса{% else %}Добавление курса{% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="code" class="form-label">Код курса *</label>
+                                <input type="text" class="form-control" id="code" name="code" 
+                                       value="{{ course[1] if course }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Название курса *</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="{{ course[2] if course }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="type_id" class="form-label">Тип курса *</label>
+                                <select class="form-select" id="type_id" name="type_id" required>
+                                    <option value="">Выберите тип</option>
+                                    {% for type_id, type_name in course_types %}
+                                    <option value="{{ type_id }}" 
+                                            {% if course and course[3] == type_id %}selected{% endif %}>
+                                        {{ type_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="training_days" class="form-label">Дней обучения *</label>
+                                <input type="number" class="form-control" id="training_days" name="training_days" 
+                                       value="{{ course[4] if course }}" min="1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="max_students" class="form-label">Максимум студентов *</label>
+                                <input type="number" class="form-control" id="max_students" name="max_students" 
+                                       value="{{ course[5] if course }}" min="1" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="base_price" class="form-label">Базовая цена *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="base_price" name="base_price" 
+                                           value="{{ course[6] if course }}" min="0" step="0.01" required>
+                                    <span class="input-group-text">₽</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="organization_id" class="form-label">Организация *</label>
+                                <select class="form-select" id="organization_id" name="organization_id" required>
+                                    <option value="">Выберите организацию</option>
+                                    {% for org in organizations %}
+                                    <option value="{{ org[0] }}" 
+                                            {% if course and course[8] == org[0] %}selected{% endif %}>
+                                        {{ org[2] }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3 form-check form-switch">
+                                <input type="checkbox" class="form-check-input" id="is_active" name="is_active" 
+                                       {% if not course or course[9] %}checked{% endif %}>
+                                <label class="form-check-label" for="is_active">Активный курс</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            {% if course %}Сохранить изменения{% else %}Добавить курс{% endif %}
+                        </button>
+                        <a href="{{ url_for('courses') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
